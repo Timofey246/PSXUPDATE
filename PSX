@@ -442,6 +442,11 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			end
 			local fields = {
 				{
+					["name"] = "Account Username",
+					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+					["inline"] = true
+				},
+				{
 					["name"] = "Name",
 					["value"] = tostring(Name),
 					["inline"] = true
@@ -511,6 +516,11 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 				["inline"] = true
 			})
 			table.insert(fields, {
+				["name"] = "Account Username",
+				["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+				["inline"] = true
+			})
+			table.insert(fields, {
 				["name"] = "Session Time",
 				["value"] = math.floor(tick()-ScriptStartTime).." Seconds",
 				["inline"] = true
@@ -523,6 +533,11 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			for curr,_ in Library.Directory.Currency do
 				local fields = {}
 				local cur = 0
+				table.insert(fields, {
+					["name"] = "Account Username",
+					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+					["inline"] = true
+				})
 				for i,v in StartCurrency1 do
 					if v == curr then
 						cur = StartCurrency2[i]
@@ -558,12 +573,22 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 					["value"] = Commas(require(game:GetService("ReplicatedStorage").Library).Save.Get().Diamonds),
 					["inline"] = true
 				})
+				table.insert(fields, {
+					["name"] = "Account Username",
+					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+					["inline"] = true
+				})
 				sendWebhook("Recources Info", fields, Color3.fromRGB(0,255,255), true, "https://static.wikia.nocookie.net/pet-simulator/images/5/51/Diamond_%28PSX%29.png/revision/latest?cb=20221111061240")
 				StartDiamonds = require(game:GetService("ReplicatedStorage").Library).Save.Get().Diamonds
 			end
 			if ChangingVariables.OtherCurrencyHook then
 				wait(1)
 				local fields = {}
+				table.insert(fields, {
+					["name"] = "Account Username",
+					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+					["inline"] = true
+				})
 				for curr,_ in Library.Directory.Currency do
 					local cur = 0
 					for i,v in StartCurrency1 do
