@@ -1,4 +1,4 @@
-wait(1)
+wait(5)
 if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 7722306047 or game.PlaceId == 12610002282 or game.PlaceId == 11725212117 then
 	local ScriptStartTime = tick()
 	local GLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
@@ -443,7 +443,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			local fields = {
 				{
 					["name"] = "Account Username",
-					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPlayer.DisplayName..")",
 					["inline"] = true
 				},
 				{
@@ -517,7 +517,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			})
 			table.insert(fields, {
 				["name"] = "Account Username",
-				["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+				["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPlayer.DisplayName..")",
 				["inline"] = true
 			})
 			table.insert(fields, {
@@ -535,7 +535,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 				local cur = 0
 				table.insert(fields, {
 					["name"] = "Account Username",
-					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPlayer.DisplayName..")",
 					["inline"] = true
 				})
 				for i,v in StartCurrency1 do
@@ -575,7 +575,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 				})
 				table.insert(fields, {
 					["name"] = "Account Username",
-					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPlayer.DisplayName..")",
 					["inline"] = true
 				})
 				sendWebhook("Recources Info", fields, Color3.fromRGB(0,255,255), true, "https://static.wikia.nocookie.net/pet-simulator/images/5/51/Diamond_%28PSX%29.png/revision/latest?cb=20221111061240")
@@ -586,7 +586,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 				local fields = {}
 				table.insert(fields, {
 					["name"] = "Account Username",
-					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPLayer.DisplayName..")",
+					["value"] = "@"..game.Players.LocalPlayer.Name.." ("..game.Players.LocalPlayer.DisplayName..")",
 					["inline"] = true
 				})
 				for curr,_ in Library.Directory.Currency do
