@@ -770,7 +770,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 						PetName = string.sub(vv.Name, string.len(v[1])+1, string.len(vv.Name))
 					end
 				end
-				table.insert(SEggInfo, PetName.." (Chance 1 to "..Library.Functions.Commas(math.floor(1/Library.Shared.GetPetChance(tostring(v[1]))))..")")
+				table.insert(SEggInfo, PetName.." (1 to "..Library.Functions.Commas(math.floor(1/Library.Shared.GetPetChance(tostring(v[1]))))..")")
 			end
 			SEggName:UpdateLabel("Selected Egg: "..EggName)
 			SEggsList:Refresh(SEggInfo)
