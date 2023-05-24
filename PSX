@@ -1,4 +1,4 @@
-wait(1)
+wait(5)
 if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 7722306047 or game.PlaceId == 12610002282 or game.PlaceId == 11725212117 then
 	local ScriptStartTime = tick()
 	local GLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
@@ -192,6 +192,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	local DefaultSettings = {}
 
 	getgenv().Settings = {
+		AutoSave = false,
 		AutoLoad = false,
 		OctupleEggs = false,
 		TripleEggs = false,
@@ -266,12 +267,22 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		local JSON
 		local HttpService = game:service('HttpService')
 		JSON = HttpService:JSONEncode(getgenv().Settings)
-		writefile('MyPSX'.." "..plrfile..'.txt',JSON)
+		makefolder("My PSX Script")
+		writefile("My PSX Script\\MyPSX "..plrfile..'.txt',JSON)
 	end
 	local function LoadSettings()
 		local HttpService = game:service('HttpService')
-		if isfile('MyPSX'.." "..plrfile..'.txt') then
-			getgenv().Settings = HttpService:JSONDecode(readfile('MyPSX'.." "..plrfile..'.txt'))
+		if isfolder("My PSX Script") then
+			if isfile('My PSX Script\\MyPSX '..plrfile..'.txt') then
+				getgenv().Settings = HttpService:JSONDecode(readfile('My PSX Script\\MyPSX '..plrfile..'.txt'))
+			end
+		end
+	end
+	local function DeleteSettings()
+		if isfolder("My PSX Script") then
+			if isfile('My PSX Script\\MyPSX '..plrfile..'.txt') then
+				delfile('My PSX Script\\MyPSX '..plrfile..'.txt')
+			end
 		end
 	end
 
@@ -319,6 +330,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		FuseAmount = 3,
 		FuseHardcore = false,
 		FuseShiny = false,
+		AutoSave = false,
 		AutoLoad = false,
 		ExcludedCoins = {},
 		FPS = 60,
@@ -374,7 +386,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			Body = httpservice:JSONEncode(data)
 		})
 	end
-	
+
 	function GetThumbnail(id, type)
 		local nailname = (type == 'Normal' or type == 'Rainbow' and 'thumbnail') or (type == 'Gold' and 'goldenThumbnail') or (type == 'Dark Matter' and 'darkMatterThumbnail')
 		local eeee = Library.Directory.Pets[tostring(id)][nailname] or Library.Directory.Pets[tostring(id)]["thumbnail"] 
@@ -383,7 +395,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		local Response = game:GetService("HttpService"):JSONDecode(game:HttpGet(Link))
 		return Response[1].thumbnailUrl
 	end
-	
+
 	local IDToName = {}
 	local NameToID = {}
 	local PettoRarity = {}
@@ -392,7 +404,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		NameToID[v.name] = i
 		PettoRarity[i] = v.rarity
 	end 
-	
+
 	local function SendNewPetHook(v)
 		local ThingyThingyTempTypeThing = (v.g and 'Gold') or (v.r and 'Rainbow') or (v.dm and 'Dark Matter') or 'Normal'
 		local Formation = (v.g and ':crown: Gold') or (v.r and ':rainbow: Rainbow') or (v.dm and ':milky_way: Dark Matter') or ':roll_of_paper: Normal'
@@ -484,7 +496,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			sendWebhook("New Pet Notify", fields, tonumber(tostring("0x" .. Color)), false, Thumbnail)
 		end
 	end
-	
+
 	spawn(function()
 		local MyPets = {}
 		for _,v in Library.Save.Get().Pets do
@@ -501,7 +513,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			end
 		end
 	end)
-	
+
 	local function SendEndCurrencyHook()
 		if ChangingVariables.DiamondsHook then
 			local fields = {}
@@ -2596,12 +2608,11 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		end
 		SaveSettings()
 	end)
+	Section:NewToggle("Auto Save Settings", "Auto Load Settings of this GUI", function(state)
+		ChangingVariables.AutoSave = state
+	end)
 	Section:NewToggle("Auto Load Settings", "Auto Load Settings of this GUI", function(state)
-		if state then
-			ChangingVariables.AutoLoad = true
-		else
-			ChangingVariables.AutoLoad = false
-		end
+		ChangingVariables.AutoLoad = state
 	end)
 
 	local function StartLoad()
@@ -2643,11 +2654,9 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		LoadSettings()
 		StartLoad()
 	end)
-	Section:NewButton("Reset Settings", "Reset all settings of this GUI", function()
-		for k in getgenv().Settings do
-			getgenv().Settings[k] = DefaultSettings[k]
-		end
-		SaveSettings()
+	Section:NewButton("Reset Settings", "Delete all settings of this GUI", function()
+		DeleteSettings()
+		game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, game.Players.LocalPlayer)
 	end)
 
 	local Tab = Window:NewTab("Info")
@@ -2699,23 +2708,23 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		}
 		sendWebhook("Test", fields, Color3.fromRGB(0, 0, 0), true)
 	end)
-	
+
 	Section:NewLabel("Webhooks before server hop (Autofarm function)")
 
 	Section:NewToggle("Send earned diamonds", "Send diamonds before server hop (autofarm function)", function(state)
 		ChangingVariables.DiamondsHook = state
 	end)
-	
+
 	Section:NewToggle("Send earned other currency", "Other coins before server hop (autofarm function)", function(state)
 		ChangingVariables.OtherCurrencyHook = state
 	end)
-	
+
 	Section:NewLabel("Webhooks with delay")
-	
+
 	Section:NewSlider("Webhook Delay", "Webhook Delay (in seconds)", 1800, 30, function(s)
 		ChangingVariables.HookCD = s
 	end)
-	
+
 	Section:NewToggle("Send every Delay Time", "Send webhooks every Delay Time below", function(state)
 		ChangingVariables.SendPerCDHook = state
 		if not SendingCurrencyHook then
@@ -2723,39 +2732,39 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		end
 	end)
 
-	
+
 	Section:NewLabel("Pets Webhook")
-	
+
 	Section:NewToggle("Send hatched pets", "Send hatched pets", function(state)
 		ChangingVariables.PetsHatchedHook = state
 	end)
-	
+
 	Section:NewLabel("Type of pets")
-	
+
 	Section:NewToggle("Normal", "Send notify about Normal pets", function(state)
 		ChangingVariables.NormalPetsHatchedHook = state
 	end)
-	
+
 	Section:NewToggle("Rare", "Send notify about Rare pets", function(state)
 		ChangingVariables.RarePetsHatchedHook = state
 	end)
-	
+
 	Section:NewToggle("Epic", "Send notify about Epic pets", function(state)
 		ChangingVariables.EpicPetsHatchedHook = state
 	end)
-	
+
 	Section:NewToggle("Legendary", "Send notify about Legendary pets", function(state)
 		ChangingVariables.LegendaryPetsHatchedHook = state
 	end)
-	
+
 	Section:NewToggle("Mythical", "Send notify about Mythical pets", function(state)
 		ChangingVariables.MythicalPetsHatchedHook = state
 	end)
-	
+
 	Section:NewToggle("Secret", "Send notify about Secret pets", function(state)
 		ChangingVariables.SecretPetsHatchedHook = state
 	end)
-	
+
 	Section:NewToggle("Exclusive", "Send notify about Exclusive pets", function(state)
 		ChangingVariables.ExclusivePetsHatchedHook = state
 	end)
@@ -2788,4 +2797,14 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	if getgenv().Settings.AutoLoad == true then
 		StartLoad()
 	end
+	spawn(function()
+		while wait(1) do
+			if ChangingVariables.AutoSave then
+				for k in getgenv().Settings do
+					getgenv().Settings[k] = ChangingVariables[k]
+				end
+				SaveSettings()
+			end
+		end
+	end)
 end
