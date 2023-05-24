@@ -723,8 +723,6 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 							ChangingVariables.SelectedEgg = string.sub(egg, 1, i)
 							GetEggInfoByName(ChangingVariables.SelectedEgg)
 							SearchingAnEgg = false
-							ChangingVariables.Hatching = true
-							spawn(AutoHatch)
 						end
 					end
 				end
@@ -732,11 +730,10 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		end
 	end)
 
-	Section:NewToggle("Hatch first egg", "Press E on the egg you wanna open", function(state)
+	Section:NewToggle("Select first egg", "Press E on the egg that you wanna open", function(state)
 		if state then
 			SearchingAnEgg = true
 		else
-			ChangingVariables.Hatching = false
 			SearchingAnEgg = false
 		end
 	end)
