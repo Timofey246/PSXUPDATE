@@ -256,6 +256,27 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		MythicalPetsHatchedHook = false,
 		SecretPetsHatchedHook = false,
 		ExclusivePetsHatchedHook = false,
+		AutoBuyPetsRarity = {
+			Basic = false,
+			Rare = false,
+			Epic = false,
+			Legendary = false,
+			Mythical = false,
+			Secret = false,
+			Event = false,
+			Exclusive = false
+		},
+		AutoBuyPetsType = {
+			Normal = false,
+			Golden = false,
+			Rainbow = false,
+			['Dark Matter'] = false
+		},
+		BuyHardcore = false,
+		BuyShiny = false,
+		BuyHuge = false,
+		BuyingBoothPets = false,
+		MaxPriceToBuyBoothPets = 0
 	}
 
 	for k,v in getgenv().Settings do
@@ -351,6 +372,27 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		MythicalPetsHatchedHook = false,
 		SecretPetsHatchedHook = false,
 		ExclusivePetsHatchedHook = false,
+		AutoBuyPetsRarity = {
+			Basic = false,
+			Rare = false,
+			Epic = false,
+			Legendary = false,
+			Mythical = false,
+			Secret = false,
+			Event = false,
+			Exclusive = false
+		},
+		AutoBuyPetsType = {
+			Normal = false,
+			Golden = false,
+			Rainbow = false,
+			['Dark Matter'] = false
+		},
+		BuyHardcore = false,
+		BuyShiny = false,
+		BuyHuge = false,
+		BuyingBoothPets = false,
+		MaxPriceToBuyBoothPets = 0
 	}
 
 	local function convertColorToDiscordFormat(color)
@@ -2650,77 +2692,58 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	
 	Section:NewLabel("Automatically buy booth pets")
 	
-	local AutoBuyPetsRarity = {
-		Basic = false,
-		Rare = false,
-		Epic = false,
-		Legendary = false,
-		Mythical = false,
-		Secret = false,
-		Event = false,
-		Exclusive = false
-	}
-	local AutoBuyPetsType = {
-		Normal = false,
-		Golden = false,
-		Rainbow = false,
-		['Dark Matter'] = false
-	}
-	local BuyHardcore, BuyShiny, BuyHuge = false, false, false
-	local BuyingBoothPets = false
-	local MaxPriceToBuyBoothPets = 0
 	Section:NewLabel("Rarity of booth pets")
 	Section:NewToggle("Basic", "Auto buy Basic Pets", function(state)
-		AutoBuyPetsRarity.Basic = state
+		ChangingVariables.AutoBuyPetsRarity.Basic = state
 	end)
 	Section:NewToggle("Rare", "Auto buy Rare Pets", function(state)
-		AutoBuyPetsRarity.Rare = state
+		ChangingVariables.AutoBuyPetsRarity.Rare = state
 	end)
 	Section:NewToggle("Epic", "Auto buy Epic Pets", function(state)
-		AutoBuyPetsRarity.Epic = state
+		ChangingVariables.AutoBuyPetsRarity.Epic = state
 	end)
 	Section:NewToggle("Legendary", "Auto buy Legendary Pets", function(state)
-		AutoBuyPetsRarity.Legendary = state
+		ChangingVariables.AutoBuyPetsRarity.Legendary = state
 	end)
 	Section:NewToggle("Mythical", "Auto buy Mythical Pets", function(state)
-		AutoBuyPetsRarity.Mythical = state
+		ChangingVariables.AutoBuyPetsRarity.Mythical = state
 	end)
 	Section:NewToggle("Secret", "Auto buy Secret Pets", function(state)
-		AutoBuyPetsRarity.Secret = state
+		ChangingVariables.AutoBuyPetsRarity.Secret = state
 	end)
 	Section:NewToggle("Event", "Auto buy Event Pets", function(state)
-		AutoBuyPetsRarity.Event = state
+		ChangingVariables.AutoBuyPetsRarity.Event = state
 	end)
 	Section:NewToggle("Exclusive", "Auto buy Exclusive Pets", function(state)
-		AutoBuyPetsRarity.Exclusive = state
+		ChangingVariables.AutoBuyPetsRarity.Exclusive = state
 	end)
 	Section:NewLabel("Types of booth pets")
 	Section:NewToggle("Hardcore", "If Hardcore pets only", function(state)
-		BuyHardcore = state
+		ChangingVariables.BuyHardcore = state
 	end)
 	Section:NewToggle("Shiny", "If Shiny pets only", function(state)
-		BuyShiny = state
+		ChangingVariables.BuyShiny = state
 	end)
 	Section:NewToggle("Huge", "If Huge pets only", function(state)
-		BuyHuge = state
+		ChangingVariables.BuyHuge = state
 	end)
 	Section:NewToggle("Dark Matter", "If Dark Matter pets", function(state)
-		AutoBuyPetsType['Dark Matter'] = state
+		ChangingVariables.AutoBuyPetsType['Dark Matter'] = state
 	end)
 	Section:NewToggle("Rainbow", "If Rainbow pets", function(state)
-		AutoBuyPetsType.Rainbow = state
+		ChangingVariables.AutoBuyPetsType.Rainbow = state
 	end)
 	Section:NewToggle("Golden", "If Golden pets", function(state)
-		AutoBuyPetsType.Golden = state
+		ChangingVariables.AutoBuyPetsType.Golden = state
 	end)
 	Section:NewToggle("Normal", "If Normal pets", function(state)
-		AutoBuyPetsType.Normal = state
+		ChangingVariables.AutoBuyPetsType.Normal = state
 	end)
 	Section:NewTextBox("Max Price", "Type here max price to buy", function(txt)
-		MaxPriceToBuyBoothPets = SuffixToMultiplier(txt)
+		ChangingVariables.MaxPriceToBuyBoothPets = SuffixToMultiplier(txt)
 	end)
 	local function AutoBuyBoothPets()
-		while BuyingBoothPets do
+		while ChangingVariables.BuyingBoothPets do
 			local BoothPets = {}
 			for kk,v in Invoke("Get All Booths") do
 				if v.Listings then
@@ -2743,23 +2766,20 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			end
 			for _,v in BoothPets do
 				-- print(v.Type, v.Rarity, tostring(v.Shiny), tostring(v.Hardcore), tostring(v.Huge), v.Price, v.UID, v.BoothID)
-				if v.Price <= MaxPriceToBuyBoothPets and AutoBuyPetsType[v.Type] and AutoBuyPetsRarity[v.Rarity] and (not v.Hardcore or BuyHardcore) and (not v.Shiny or BuyShiny) and (not v.Huge or BuyHuge) then
+				if v.Price <= ChangingVariables.MaxPriceToBuyBoothPets and ChangingVariables.AutoBuyPetsType[v.Type] and ChangingVariables.AutoBuyPetsRarity[v.Rarity] and (not v.Hardcore or ChangingVariables.BuyHardcore) and (not v.Shiny or ChangingVariables.BuyShiny) and (not v.Huge or ChangingVariables.BuyHuge) then
 					local booth
-					print("yes")
 					for _, x in pairs(workspace:WaitForChild("__MAP"):WaitForChild("Interactive"):WaitForChild("Booths"):GetChildren()) do
 						if x:FindFirstChild("Pets").SurfaceGui.PetScroll:FindFirstChild(v.UID) then
 							booth = x
 						end
 					end
-					if BuyingBoothPets then
+					if ChangingVariables.BuyingBoothPets then
 						if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - booth.Pets.Position).Magnitude >= 25 then
 							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = booth.Pets.CFrame
 							wait()
 						end
-						print("Starting")
 						Invoke("Purchase Trading Booth Pet", tonumber(v.BoothID), v.UID, v.Price)
-						while BuyingBoothPets and booth.Pets.SurfaceGui.PetScroll[v.UID] do
-							print("Trying")
+						while ChangingVariables.BuyingBoothPets and booth.Pets.SurfaceGui.PetScroll[v.UID] do
 							Invoke("Purchase Trading Booth Pet", tonumber(v.BoothID), v.UID, v.Price)
 							wait()
 						end
@@ -2770,7 +2790,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		end
 	end
 	Section:NewToggle("Start Auto Buy Booth Pets", "Press to start catch", function(state)
-		BuyingBoothPets = state
+		ChangingVariables.BuyingBoothPets = state
 		if state then
 			AutoBuyBoothPets()
 		end
@@ -2824,6 +2844,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		spawn(SetFps)
 		spawn(StatsTracker)
 		spawn(SendCurrencyHook)
+		spawn(AutoBuyBoothPets)
 		spawn(function()
 			GetEggInfoByName(ChangingVariables.SelectedEgg)
 		end)
