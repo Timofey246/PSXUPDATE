@@ -2902,7 +2902,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		local fields = {
 			{
 				["name"] = "Test",
-				["value"] = "Test",
+				["value"] = "This is a test message",
 				["inline"] = true
 			}
 		}
