@@ -2203,14 +2203,55 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	Section:NewTextBox("Tracker Time (sec)", "How long to keep info in seconds", function(txt)
 		ChangingVariables.STrackerUPDT = tonumber(txt)
 	end)
+	
+	workspace["__THINGS"].Coins.ChildAdded:Connect(function(coin)
+		if ChangingVariables.Render == true then
+			pcall(function()
+				coin:WaitForChild("Coin").MeshId = 0
+			end)
+		end
+	end)
+	
+	local function TurnRendering(b)
+		ChangingVariables.Render = b
+		if not b then
+			game:GetService("RunService"):Set3dRenderingEnabled(false)
+			spawn(function()
+				while ChangingVariables.Render == true do
+					for _,v in pairs(workspace["__THINGS"].Orbs:GetChildren()) do
+						pcall(function()
+							if v:FindFirstChild("Orb") then
+								v.Orb:Destroy()
+							end
+						end)
+					end
+					wait()
+				end
+			end)
+			for _,v in pairs(workspace["__THINGS"].Coins:GetChildren()) do
+				pcall(function()
+					if v:FindFirstChild("Coin") then
+						v.Coin.MeshId = 0
+					end
+				end)
+			end
+			for _,v in pairs(workspace:GetDescendants()) do
+				if v:IsA("ParticleEmitter") or v:IsA("Texture") then
+					v:Destroy()
+				elseif v:IsA("MeshPart") then
+					v.TextureID = 0
+				end
+			end
+		else
+			game:GetService("RunService"):Set3dRenderingEnabled(true)
+		end
+	end
 
 	Section:NewToggle("Turn off render", "Turn off 3d rendering", function(state)
 		if state then
-			ChangingVariables.Render = false
-			game:GetService("RunService"):Set3dRenderingEnabled(false)
+			TurnRendering(false)
 		else
-			ChangingVariables.Render = true
-			game:GetService("RunService"):Set3dRenderingEnabled(true)
+			TurnRendering(true)
 		end
 	end)
 
@@ -2640,7 +2681,9 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		if ChangingVariables.FarmZone == true then
 			AreasLabel:UpdateLabel("Choosed Farming Zone Mode")
 		end
-		game:GetService("RunService"):Set3dRenderingEnabled(ChangingVariables.Render)
+		spawn(function()
+			TurnRendering(ChangingVariables.Render)
+		end)
 		spawn(AutoHatch)
 		spawn(StartFuse)
 		spawn(ClaimDM)
