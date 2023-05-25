@@ -2743,50 +2743,52 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		ChangingVariables.MaxPriceToBuyBoothPets = SuffixToMultiplier(txt)
 	end)
 	local function AutoBuyBoothPets()
-		while ChangingVariables.BuyingBoothPets do
-			local BoothPets = {}
-			for kk,v in Invoke("Get All Booths") do
-				if v.Listings then
-					for k,v in v.Listings do
-						local pet = Library.PetCmds.Get(k)
-						local petR = Library.Directory.Pets[pet.id]
-						local BoothPet = {
-							Type = (pet.g and "Gold") or (pet.r and "Rainbow") or (pet.dm and "Dark Matter") or "Normal",
-							Rarity = petR.rarity,
-							Shiny = pet.sh or false,
-							Hardcore = pet.hc or false,
-							Huge = petR.Huge or false,
-							Price = v.Price,
-							UID = k,
-							BoothID = kk,
-						}
-						table.insert(BoothPets, BoothPet)
+		if game.PlaceId == 7722306047 or game.PlaceId == 12610002282 or game.PlaceId == 11725212117 then
+			while ChangingVariables.BuyingBoothPets do
+				local BoothPets = {}
+				for kk,v in Invoke("Get All Booths") do
+					if v.Listings then
+						for k,v in v.Listings do
+							local pet = Library.PetCmds.Get(k)
+							local petR = Library.Directory.Pets[pet.id]
+							local BoothPet = {
+								Type = (pet.g and "Gold") or (pet.r and "Rainbow") or (pet.dm and "Dark Matter") or "Normal",
+								Rarity = petR.rarity,
+								Shiny = pet.sh or false,
+								Hardcore = pet.hc or false,
+								Huge = petR.Huge or false,
+								Price = v.Price,
+								UID = k,
+								BoothID = kk,
+							}
+							table.insert(BoothPets, BoothPet)
+						end
 					end
 				end
-			end
-			for _,v in BoothPets do
-				-- print(v.Type, v.Rarity, tostring(v.Shiny), tostring(v.Hardcore), tostring(v.Huge), v.Price, v.UID, v.BoothID)
-				if v.Price <= ChangingVariables.MaxPriceToBuyBoothPets and ChangingVariables.AutoBuyPetsType[v.Type] and ChangingVariables.AutoBuyPetsRarity[v.Rarity] and (not v.Hardcore or ChangingVariables.BuyHardcore) and (not v.Shiny or ChangingVariables.BuyShiny) and (not v.Huge or ChangingVariables.BuyHuge) then
-					local booth
-					for _, x in pairs(workspace:WaitForChild("__MAP"):WaitForChild("Interactive"):WaitForChild("Booths"):GetChildren()) do
-						if x:FindFirstChild("Pets").SurfaceGui.PetScroll:FindFirstChild(v.UID) then
-							booth = x
+				for _,v in BoothPets do
+					-- print(v.Type, v.Rarity, tostring(v.Shiny), tostring(v.Hardcore), tostring(v.Huge), v.Price, v.UID, v.BoothID)
+					if v.Price <= ChangingVariables.MaxPriceToBuyBoothPets and ChangingVariables.AutoBuyPetsType[v.Type] and ChangingVariables.AutoBuyPetsRarity[v.Rarity] and (not v.Hardcore or ChangingVariables.BuyHardcore) and (not v.Shiny or ChangingVariables.BuyShiny) and (not v.Huge or ChangingVariables.BuyHuge) then
+						local booth
+						for _, x in pairs(workspace:WaitForChild("__MAP"):WaitForChild("Interactive"):WaitForChild("Booths"):GetChildren()) do
+							if x:FindFirstChild("Pets").SurfaceGui.PetScroll:FindFirstChild(v.UID) then
+								booth = x
+							end
 						end
-					end
-					if ChangingVariables.BuyingBoothPets then
-						if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - booth.Pets.Position).Magnitude >= 25 then
-							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = booth.Pets.CFrame
-							wait()
-						end
-						Invoke("Purchase Trading Booth Pet", tonumber(v.BoothID), v.UID, v.Price)
-						while ChangingVariables.BuyingBoothPets and booth.Pets.SurfaceGui.PetScroll[v.UID] do
+						if ChangingVariables.BuyingBoothPets then
+							if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - booth.Pets.Position).Magnitude >= 25 then
+								game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = booth.Pets.CFrame
+								wait()
+							end
 							Invoke("Purchase Trading Booth Pet", tonumber(v.BoothID), v.UID, v.Price)
-							wait()
+							while ChangingVariables.BuyingBoothPets and booth.Pets.SurfaceGui.PetScroll[v.UID] do
+								Invoke("Purchase Trading Booth Pet", tonumber(v.BoothID), v.UID, v.Price)
+								wait()
+							end
 						end
 					end
 				end
+				wait()
 			end
-			wait()
 		end
 	end
 	Section:NewToggle("Start Auto Buy Booth Pets", "Press to start catch", function(state)
