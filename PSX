@@ -1142,6 +1142,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 						print("Start Hop 2")
 						SendEndCurrencyHook()
 						serverHop()
+						print("End hop")
 						wait(15)
 					end
 				end
