@@ -908,7 +908,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 								coin.BoostM = v.b.l[1].m
 							end
 							table.insert(ChangingVariables.FarmCoins, coin)
-							for i, vv in coin.PetsFarming do
+							for k, vv in coin.PetsFarming do
 								if table.find(ChangingVariables.FarmPets, vv) then
 									for i, v in ChangingVariables.FarmPets do
 										if v == vv then
@@ -925,15 +925,17 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	end
 
 	local function SentFarmPet(pet, coin)
-		Invoke("Join Coin", coin, {pet})
-		Fire("Farm Coin", coin, pet)
+		spawn(function()
+			Invoke("Join Coin", coin, {pet})
+			Fire("Farm Coin", coin, pet)
+		end)
 	end
 
 	local function SentFarmPets(pets, coin)
 		Invoke("Join Coin", coin, pets)
 		for i, v in pets do
 			spawn(function()
-				Fire("Farm Coin", coin, v)
+				Fire("Farm Coin", coin, v)	
 			end)
 		end
 	end
@@ -1140,6 +1142,22 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 										end)
 									end
 									spawn(function()
+										if #ChangingVariables.FarmPets > 1 then
+											if ChangingVariables.FarmTP == true then
+												local TPZone = coin.Position
+												if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - TPZone).Magnitude >= 350 then
+													game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(TPZone + Vector3.new(0,50,0))
+												end
+											end
+											SentFarmPet(v, coin.ID)
+											for i, v in ChangingVariables.FarmCoins do
+												if v == coin then
+													table.remove(ChangingVariables.FarmCoins, i)
+												end
+											end
+										end
+									end)
+									if #ChangingVariables.FarmPets <= 1 then
 										if ChangingVariables.FarmTP == true then
 											local TPZone = coin.Position
 											if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - TPZone).Magnitude >= 350 then
@@ -1152,19 +1170,25 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 												table.remove(ChangingVariables.FarmCoins, i)
 											end
 										end
-										if #ChangingVariables.FarmCoins < #ChangingVariables.FarmPets then
-											local needpets = ChangingVariables.FarmPets
-											for _,v in usedpets do
-												for i,vv in needpets do
-													if vv == v then
-														table.remove(needpets,i)
-													end
+									end
+									if #ChangingVariables.FarmCoins < 1 then
+										local needpets = ChangingVariables.FarmPets
+										for _,v in usedpets do
+											for i,vv in needpets do
+												if vv == v then
+													table.remove(needpets,i)
 												end
 											end
-											wait(ChangingVariables.AutoFarmSentPetCD)
-											SentFarmPets(needpets, coin.ID)
 										end
-									end)
+										wait(ChangingVariables.AutoFarmSentPetCD)
+										if ChangingVariables.FarmTP == true then
+											local TPZone = coin.Position
+											if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - TPZone).Magnitude >= 350 then
+												game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(TPZone + Vector3.new(0,50,0))
+											end
+										end
+										SentFarmPets(needpets, coin.ID)
+									end
 								end
 							end)
 						end
@@ -1195,9 +1219,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 					end
 				end
 			end
-			if ChangingVariables.AutoFarmCD > 0 then
-				wait(ChangingVariables.AutoFarmCD)
-			end
+			wait(ChangingVariables.AutoFarmCD)
 		end
 	end
 
@@ -2254,7 +2276,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	end)
 
 	workspace["__THINGS"].Coins.ChildAdded:Connect(function(coin)
-		if ChangingVariables.Render == true then
+		if ChangingVariables.Render == false then
 			pcall(function()
 				coin:WaitForChild("Coin").MeshId = 0
 			end)
@@ -2266,7 +2288,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		if not b then
 			game:GetService("RunService"):Set3dRenderingEnabled(false)
 			spawn(function()
-				while ChangingVariables.Render == true do
+				while ChangingVariables.Render == false do
 					for _,v in pairs(workspace["__THINGS"].Orbs:GetChildren()) do
 						pcall(function()
 							if v:FindFirstChild("Orb") then
