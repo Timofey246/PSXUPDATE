@@ -1027,13 +1027,78 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 										end)
 									end
 									if ChangingVariables.FarmHop == true and not HasRequiredCoin then
-										for i = 1,60 do
-											if #workspace["__THINGS"].Orbs:GetChildren() > 0 or #workspace["__THINGS"].Lootbags:GetChildren() > 0 then
-												wait(1)
-											end
+										local coinChanged = false
+										local coinBoost = 0
+										local coinHP = 0
+										for i, v in ChangingVariables.FarmCoins do
+											spawn(function()
+												pcall(function()
+													if ChangingVariables.SecondFarmMode == "Highest Coin Multiplier" then
+														if v.Boost then
+															if v.BoostM > coinBoost then
+																coinChanged = true
+																coinBoost = v.BoostM
+																HasRequiredCoin = true
+															end
+														end
+													elseif ChangingVariables.SecondFarmMode == "Highest Hitpoint" then
+														if v.Hitpoints > coinHP then
+															coinHP = v.Hitpoints
+															HasRequiredCoin = true
+														end
+													elseif ChangingVariables.SecondFarmMode == "Fruits" then
+														if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
+															HasRequiredCoin = true
+															coinChanged = true
+														end
+													elseif string.find(v.Name, ChangingVariables.SecondFarmMode) then
+														HasRequiredCoin = true
+														coinChanged = true
+													end
+													pcall(function()
+														if ChangingVariables.FarmMode == "Highest Coin Multiplier" then
+															if v.Boost then
+																if v.BoostM > coinBoost then
+																	HasRequiredCoin = true
+																	coinBoost = v.BoostM
+																end
+															end
+														elseif ChangingVariables.SecondFarmMode == "Highest Hitpoint" then
+															if v.Hitpoints > coinHP then
+																coinHP = v.Hitpoints
+																HasRequiredCoin = true
+															end
+														elseif ChangingVariables.FarmMode == "Fruits" then
+															if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
+																HasRequiredCoin = true
+															end
+														elseif string.find(v.Name, ChangingVariables.FarmMode) then
+															HasRequiredCoin = true
+														end
+													end)
+												end)
+											end)
 										end
-										SendEndCurrencyHook()
-										serverHop()
+										if ChangingVariables.FarmHop == true and not HasRequiredCoin then
+											print("Start Hop 1")
+											local WasOrbOrBag = false
+											workspace["__THINGS"].Orbs.ChildAdded:Connect(function()
+												WasOrbOrBag = true
+											end)
+											for i = 1,30 do
+												if #workspace["__THINGS"].Orbs:GetChildren() > 0 or #workspace["__THINGS"].Lootbags:GetChildren() > 0 then
+													wait(2)
+												end
+												while WasOrbOrBag do
+													WasOrbOrBag = false
+													wait(2)
+												end
+											end
+											print("Start Hop 2")
+											SendEndCurrencyHook()
+											serverHop()
+											wait(15)
+										end
 									end
 									spawn(function()
 										if ChangingVariables.FarmTP == true then
@@ -1086,6 +1151,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 													if v.Hitpoints > coinHP then
 														coinHP = v.Hitpoints
 														HasRequiredCoin = true
+														coinChanged = true
 														coin = v
 													end
 												elseif ChangingVariables.SecondFarmMode == "Fruits" then
@@ -1198,24 +1264,78 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 						end
 					end
 					if ChangingVariables.FarmHop == true and not HasRequiredCoin then
-						print("Start Hop 1")
-						local WasOrbOrBag = false
-						workspace["__THINGS"].Orbs.ChildAdded:Connect(function()
-							WasOrbOrBag = true
-						end)
-						for i = 1,30 do
-							if #workspace["__THINGS"].Orbs:GetChildren() > 0 or #workspace["__THINGS"].Lootbags:GetChildren() > 0 then
-								wait(2)
-							end
-							while WasOrbOrBag do
-								WasOrbOrBag = false
-								wait(2)
-							end
+						local coinChanged = false
+						local coinBoost = 0
+						local coinHP = 0
+						for i, v in ChangingVariables.FarmCoins do
+							spawn(function()
+								pcall(function()
+									if ChangingVariables.SecondFarmMode == "Highest Coin Multiplier" then
+										if v.Boost then
+											if v.BoostM > coinBoost then
+												coinChanged = true
+												coinBoost = v.BoostM
+												HasRequiredCoin = true
+											end
+										end
+									elseif ChangingVariables.SecondFarmMode == "Highest Hitpoint" then
+										if v.Hitpoints > coinHP then
+											coinHP = v.Hitpoints
+											HasRequiredCoin = true
+										end
+									elseif ChangingVariables.SecondFarmMode == "Fruits" then
+										if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
+											HasRequiredCoin = true
+											coinChanged = true
+										end
+									elseif string.find(v.Name, ChangingVariables.SecondFarmMode) then
+										HasRequiredCoin = true
+										coinChanged = true
+									end
+									pcall(function()
+										if ChangingVariables.FarmMode == "Highest Coin Multiplier" then
+											if v.Boost then
+												if v.BoostM > coinBoost then
+													HasRequiredCoin = true
+													coinBoost = v.BoostM
+												end
+											end
+										elseif ChangingVariables.SecondFarmMode == "Highest Hitpoint" then
+											if v.Hitpoints > coinHP then
+												coinHP = v.Hitpoints
+												HasRequiredCoin = true
+											end
+										elseif ChangingVariables.FarmMode == "Fruits" then
+											if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
+												HasRequiredCoin = true
+											end
+										elseif string.find(v.Name, ChangingVariables.FarmMode) then
+											HasRequiredCoin = true
+										end
+									end)
+								end)
+							end)
 						end
-						print("Start Hop 2")
-						SendEndCurrencyHook()
-						serverHop()
-						wait(15)
+						if ChangingVariables.FarmHop == true and not HasRequiredCoin then
+							print("Start Hop 1")
+							local WasOrbOrBag = false
+							workspace["__THINGS"].Orbs.ChildAdded:Connect(function()
+								WasOrbOrBag = true
+							end)
+							for i = 1,30 do
+								if #workspace["__THINGS"].Orbs:GetChildren() > 0 or #workspace["__THINGS"].Lootbags:GetChildren() > 0 then
+									wait(2)
+								end
+								while WasOrbOrBag do
+									WasOrbOrBag = false
+									wait(2)
+								end
+							end
+							print("Start Hop 2")
+							SendEndCurrencyHook()
+							serverHop()
+							wait(15)
+						end
 					end
 				end
 			end
