@@ -925,7 +925,10 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	end
 
 	local function SentFarmPet(pet, coin)
-		Invoke("Join Coin", coin, {pet})
+		spawn(function()
+			Invoke("Join Coin", coin, {pet})
+		end)
+		wait()
 		Fire("Farm Coin", coin, pet)
 	end
 
@@ -1068,39 +1071,26 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 									local coinChanged = false
 									local coinBoost = 0
 									local coinHP = 0
-									if not (ChangingVariables.SecondFarmMode == "") then
-										for i, v in ChangingVariables.FarmCoins do
-											spawn(function()
-												pcall(function()
-													if ChangingVariables.SecondFarmMode == "Highest Coin Multiplier" then
-														if v.Boost then
-															if v.BoostM > coinBoost then
-																coinChanged = true
-																coinBoost = v.BoostM
-																HasRequiredCoin = true
-																coin = v
-															end
-														end
-													elseif ChangingVariables.SecondFarmMode == "Highest Hitpoint" then
-														if v.Hitpoints > coinHP then
-															coinHP = v.Hitpoints
-															HasRequiredCoin = true
-															coin = v
-														end
-													elseif ChangingVariables.SecondFarmMode == "Fruits" then
-														if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
-															HasRequiredCoin = true
+									for i, v in ChangingVariables.FarmCoins do
+										spawn(function()
+											pcall(function()
+												if ChangingVariables.SecondFarmMode == "Highest Coin Multiplier" then
+													if v.Boost then
+														if v.BoostM > coinBoost then
 															coinChanged = true
+															coinBoost = v.BoostM
+															HasRequiredCoin = true
 															coin = v
-														else
-															if v.Boost and not coinChanged then
-																if v.BoostM > coinBoost then
-																	coinBoost = v.BoostM
-																	coin = v
-																end
-															end
 														end
-													elseif string.find(v.Name, ChangingVariables.SecondFarmMode) then
+													end
+												elseif ChangingVariables.SecondFarmMode == "Highest Hitpoint" then
+													if v.Hitpoints > coinHP then
+														coinHP = v.Hitpoints
+														HasRequiredCoin = true
+														coin = v
+													end
+												elseif ChangingVariables.SecondFarmMode == "Fruits" then
+													if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
 														HasRequiredCoin = true
 														coinChanged = true
 														coin = v
@@ -1112,73 +1102,93 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 															end
 														end
 													end
-													pcall(function()
-														if ChangingVariables.FarmMode == "Highest Coin Multiplier" then
-															if v.Boost then
-																if v.BoostM > coinBoost then
-																	HasRequiredCoin = true
-																	coinBoost = v.BoostM
-																	coin = v
-																end
-															end
-														elseif ChangingVariables.SecondFarmMode == "Highest Hitpoint" then
-															if v.Hitpoints > coinHP then
-																coinHP = v.Hitpoints
-																HasRequiredCoin = true
-																coin = v
-															end
-														elseif ChangingVariables.FarmMode == "Fruits" then
-															if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
-																HasRequiredCoin = true
-																coin = v
-															end
-														elseif string.find(v.Name, ChangingVariables.FarmMode) then
-															HasRequiredCoin = true
+												elseif string.find(v.Name, ChangingVariables.SecondFarmMode) then
+													HasRequiredCoin = true
+													coinChanged = true
+													coin = v
+												else
+													if v.Boost and not coinChanged then
+														if v.BoostM > coinBoost then
+															coinBoost = v.BoostM
 															coin = v
-														end
-													end)
-												end)
-											end)
-										end
-										spawn(function()
-											if ChangingVariables.FarmTP == true then
-												local TPZone = coin.Position
-												if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - TPZone).Magnitude >= 350 then
-													game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(TPZone + Vector3.new(0,50,0))
-												end
-											end
-											SentFarmPet(v, coin.ID)
-											for i, v in ChangingVariables.FarmCoins do
-												if v == coin then
-													table.remove(ChangingVariables.FarmCoins, i)
-												end
-											end
-											if #ChangingVariables.FarmCoins == 1 then
-												local needpets = ChangingVariables.FarmPets
-												for _,v in usedpets do
-													for i,vv in needpets do
-														if vv == v then
-															table.remove(needpets,i)
 														end
 													end
 												end
-												wait(ChangingVariables.AutoFarmSentPetCD)
-												SentFarmPets(needpets, coin.ID)
-											end
+												pcall(function()
+													if ChangingVariables.FarmMode == "Highest Coin Multiplier" then
+														if v.Boost then
+															if v.BoostM > coinBoost then
+																HasRequiredCoin = true
+																coinBoost = v.BoostM
+																coin = v
+															end
+														end
+													elseif ChangingVariables.SecondFarmMode == "Highest Hitpoint" then
+														if v.Hitpoints > coinHP then
+															coinHP = v.Hitpoints
+															HasRequiredCoin = true
+															coin = v
+														end
+													elseif ChangingVariables.FarmMode == "Fruits" then
+														if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
+															HasRequiredCoin = true
+															coin = v
+														end
+													elseif string.find(v.Name, ChangingVariables.FarmMode) then
+														HasRequiredCoin = true
+														coin = v
+													end
+												end)
+											end)
 										end)
 									end
+									spawn(function()
+										if ChangingVariables.FarmTP == true then
+											local TPZone = coin.Position
+											if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - TPZone).Magnitude >= 350 then
+												game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(TPZone + Vector3.new(0,50,0))
+											end
+										end
+										SentFarmPet(v, coin.ID)
+										for i, v in ChangingVariables.FarmCoins do
+											if v == coin then
+												table.remove(ChangingVariables.FarmCoins, i)
+											end
+										end
+										if #ChangingVariables.FarmCoins < #ChangingVariables.FarmPets then
+											local needpets = ChangingVariables.FarmPets
+											for _,v in usedpets do
+												for i,vv in needpets do
+													if vv == v then
+														table.remove(needpets,i)
+													end
+												end
+											end
+											wait(ChangingVariables.AutoFarmSentPetCD)
+											SentFarmPets(needpets, coin.ID)
+										end
+									end)
 								end
 							end)
-							if #ChangingVariables.FarmCoins >= 1 then
-								wait(ChangingVariables.AutoFarmSentPetCD)
-							end
+						end
+						if #ChangingVariables.FarmCoins >= 1 then
+							-- print(#ChangingVariables.FarmCoins)
+							wait(ChangingVariables.AutoFarmSentPetCD)
 						end
 					end
 					if ChangingVariables.FarmHop == true and not HasRequiredCoin then
 						print("Start Hop 1")
-						for i = 1,60 do
+						local WasOrbOrBag = false
+						workspace["__THINGS"].Orbs.ChildAdded:Connect(function()
+							WasOrbOrBag = true
+						end)
+						for i = 1,30 do
 							if #workspace["__THINGS"].Orbs:GetChildren() > 0 or #workspace["__THINGS"].Lootbags:GetChildren() > 0 then
-								wait(1)
+								wait(2)
+							end
+							while WasOrbOrBag do
+								WasOrbOrBag = false
+								wait(2)
 							end
 						end
 						print("Start Hop 2")
@@ -2689,9 +2699,9 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			selling = false
 		end
 	end)
-	
+
 	Section:NewLabel("Automatically buy booth pets")
-	
+
 	Section:NewLabel("Rarity of booth pets")
 	Section:NewToggle("Basic", "Auto buy Basic Pets", function(state)
 		ChangingVariables.AutoBuyPetsRarity.Basic = state
@@ -2781,6 +2791,10 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 							end
 							Invoke("Purchase Trading Booth Pet", tonumber(v.BoothID), v.UID, v.Price)
 							while ChangingVariables.BuyingBoothPets and booth.Pets.SurfaceGui.PetScroll[v.UID] do
+								if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - booth.Pets.Position).Magnitude >= 25 then
+									game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = booth.Pets.CFrame
+									wait()
+								end
 								Invoke("Purchase Trading Booth Pet", tonumber(v.BoothID), v.UID, v.Price)
 								wait()
 							end
@@ -2904,7 +2918,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		local fields = {
 			{
 				["name"] = "Test",
-				["value"] = "This is a test message",
+				["value"] = "@everyone\nThis is a test message",
 				["inline"] = true
 			}
 		}
