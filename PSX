@@ -925,10 +925,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	end
 
 	local function SentFarmPet(pet, coin)
-		spawn(function()
-			Invoke("Join Coin", coin, {pet})
-		end)
-		wait()
+		Invoke("Join Coin", coin, {pet})
 		Fire("Farm Coin", coin, pet)
 	end
 
