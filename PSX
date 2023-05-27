@@ -1358,6 +1358,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 								end)
 							end)
 						end
+						wait(1)
 						if ChangingVariables.FarmHop == true and not HasRequiredCoin then
 							print("Start Hop 1")
 							local WasOrbOrBag = false
