@@ -2660,12 +2660,12 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		end
 	end)
 	local sendingmail = false
-	game:GetService("Players").Robustime.PlayerGui.Mailbox.Changed:Connect(function()
-		if game:GetService("Players").Robustime.PlayerGui.Mailbox.Enabled == true and sendingmail then
-			game:GetService("Players").Robustime.PlayerGui.Mailbox.Enabled = false
+	game:GetService("Players").LocalPlayer.PlayerGui.Mailbox.Changed:Connect(function()
+		if game:GetService("Players").LocalPlayer.PlayerGui.Mailbox.Enabled == true and sendingmail then
+			game:GetService("Players").LocalPlayer.PlayerGui.Mailbox.Enabled = false
 		end
 	end)
-	
+
 	Section:NewLabel("Additional")
 	Section:NewButton("Support creator", "Give a gift to the creator of this script :>", function()
 		sendingmail = true
