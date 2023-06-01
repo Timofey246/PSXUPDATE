@@ -1406,11 +1406,11 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 							end)
 							for i = 1,30 do
 								if #workspace["__THINGS"].Orbs:GetChildren() > 0 or #workspace["__THINGS"].Lootbags:GetChildren() > 0 then
-									wait(2)
+									wait(15)
 								end
 								while WasOrbOrBag do
 									WasOrbOrBag = false
-									wait(2)
+									wait(15)
 								end
 							end
 							print("Start Hop 2")
