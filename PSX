@@ -1169,7 +1169,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 					local HasRequiredCoin = false
 					local usedpets = {}
 					for i, v in ChangingVariables.FarmPets do
-						wait(.25)
+						wait(.15)
 						table.insert(usedpets, v)
 						if ChangingVariables.Farming then
 							if not (#ChangingVariables.FarmCoins <= 0) then
