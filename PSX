@@ -2509,7 +2509,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	RenderALText.BackgroundTransparency = 1
 	RenderALText.TextColor3 = Color3.new(1, 1, 1)
 	RenderALText.TextTransparency = 0.5
-	RenderALText.Text = 'Press Ctrl + L\nto turn off Auto Load'
+	RenderALText.Text = 'Press "Ctrl + L"\nto turn off Auto Load'
 	RenderALText.Font = "FredokaOne"
 	local function TurnRendering(b)
 		ChangingVariables.Render = b
