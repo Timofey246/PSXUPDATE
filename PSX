@@ -3150,10 +3150,26 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		end)
 		local CtrlPressed = false
 		local LPressed = false
+		local AutoLoadDisabled = false
 		local function ChangeAutoLoad()
-			if CtrlPressed and LPressed then
-				ChangingVariables.AutoLoad = false
-				RenderALText.Text = "Auto Load\nDisabled"
+			if not AutoLoadDisabled then
+				if CtrlPressed and LPressed then
+					ChangingVariables.AutoLoad = false
+					RenderALText.Text = "Auto Load\nDisabled"
+					RenderALText.TextTransparency = 0
+					AutoLoadDisabled = true
+				else
+					if CtrlPressed then
+						RenderALText.Text = 'Press "L"\nto turn off Auto Load'
+						RenderALText.TextTransparency = 0.25
+					elseif LPressed then
+						RenderALText.Text = 'Press "Ctrl"\nto turn off Auto Load'
+						RenderALText.TextTransparency = 0.25
+					else
+						RenderALText.TextTransparency = 0.5
+						RenderALText.Text = 'Press "Ctrl + L"\nto turn off Auto Load'
+					end
+				end
 			end
 		end
 		game:GetService("UserInputService").InputBegan:Connect(function(key)
@@ -3168,8 +3184,10 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		game:GetService("UserInputService").InputEnded:Connect(function(key)
 			if key.KeyCode == Enum.KeyCode.LeftControl or key.KeyCode == Enum.KeyCode.RightControl then
 				CtrlPressed = false
+				spawn(ChangeAutoLoad)
 			elseif key.KeyCode == Enum.KeyCode.L then
 				LPressed = false
+				spawn(ChangeAutoLoad)
 			end
 		end)
 	end
