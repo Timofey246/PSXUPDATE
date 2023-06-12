@@ -1,4 +1,5 @@
 wait(5)
+print("Main script")
 if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 7722306047 or game.PlaceId == 12610002282 or game.PlaceId == 11725212117 then
 	local ScriptStartTime = tick()
 	local GLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
@@ -177,7 +178,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		local body = httpservice:JSONDecode(req.Body)
 		if body and body.data then
 			for i, v in next, body.data do
-				if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.playing > v.maxPlayers/1.5 and not (v.id == game.JobId)  then
+				if type(v) == "table" and tonumber(v.playing) and tonumber(v.maxPlayers) and v.playing < v.maxPlayers and v.playing > 1 and not (v.id == game.JobId)  then
 					table.insert(servers, 1, v.id)
 				end 
 			end
@@ -1169,7 +1170,6 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 					local HasRequiredCoin = false
 					local usedpets = {}
 					for i, v in ChangingVariables.FarmPets do
-						wait(.15)
 						table.insert(usedpets, v)
 						if ChangingVariables.Farming then
 							if not (#ChangingVariables.FarmCoins <= 0) then
@@ -2494,9 +2494,9 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	Section:NewTextBox("Tracker Time (sec)", "How long to keep info in seconds", function(txt)
 		ChangingVariables.STrackerUPDT = tonumber(txt)
 	end)
-	
+
 	local RenderGui = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
-	RenderGui.DisplayOrder = 1
+	RenderGui.DisplayOrder = 0
 	RenderGui.IgnoreGuiInset = true
 	RenderGui.Enabled = false
 	local RenderFrame = Instance.new("Frame", RenderGui)
@@ -2504,6 +2504,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	RenderFrame.Position = UDim2.new(0,0,0,0)
 	RenderFrame.BackgroundColor3 = Color3.new(0,0,0)
 	local RenderALText = Instance.new("TextLabel", RenderFrame)
+	RenderALText.Visible = false
 	RenderALText.Size = UDim2.new(1,0,1,0)
 	RenderALText.TextScaled = true
 	RenderALText.BackgroundTransparency = 1
@@ -2516,6 +2517,9 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		if not b then
 			game:GetService("RunService"):Set3dRenderingEnabled(false)
 			RenderGui.Enabled = true
+			if ChangingVariables.AutoLoad then
+				RenderALText.Visible = true
+			end
 		else
 			RenderGui.Enabled = false
 			game:GetService("RunService"):Set3dRenderingEnabled(true)
