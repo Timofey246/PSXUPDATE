@@ -1,5 +1,4 @@
 wait(5)
-print("Main script")
 if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 7722306047 or game.PlaceId == 12610002282 or game.PlaceId == 11725212117 then
 	local ScriptStartTime = tick()
 	local GLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
@@ -187,6 +186,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			game:GetService("TeleportService"):TeleportToPlaceInstance(gameId, servers[math.random(1, #servers)], game.Players.LocalPlayer)
 		end
 		game:GetService("TeleportService").TeleportInitFailed:Connect(function()
+			wait(1)
 			game:GetService("TeleportService"):TeleportToPlaceInstance(gameId, servers[math.random(1, #servers)], game.Players.LocalPlayer)
 		end)
 	end
@@ -201,6 +201,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		Hatching = false,
 		SearchingAnEgg = false,
 		AnEggFounded = false,
+		FarmWorld = "Spawn",
 		FarmAreas = {},
 		AutoFarmSentPetCD = 0.125,
 		AutoFarmCD = 0,
@@ -279,6 +280,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		BuyingBoothPets = false,
 		MaxPriceToBuyBoothPets = 0,
 		AutoFarmBestPosition = false,
+		MineMultSearching = false,
 	}
 
 	local plrfile = game.Players.LocalPlayer.Name
@@ -311,6 +313,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		SelectedEgg = "",
 		AppEggName = "",
 		Hatching = false,
+		FarmWorld = "Spawn",
 		FarmAreas = {},
 		FarmPets = {},
 		FarmCoins = {},
@@ -393,6 +396,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		BuyingBoothPets = false,
 		MaxPriceToBuyBoothPets = 0,
 		AutoFarmBestPosition = false,
+		MineMultSearching = false,
 	}
 
 	local function convertColorToDiscordFormat(color)
@@ -848,6 +852,17 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	end
 	local WorldCoins1 = Library.Things:WaitForChild("Coins")
 	local function GetFarmCoins()
+		if not (Library.WorldCmds.Get() == ChangingVariables.FarmWorld) and not ChangingVariables.FarmZone then
+			if ChangingVariables.FarmWorld == "Diamond Mine" then
+				if Library.WorldCmds.GetMap().Interactive:FindFirstChild("Diamond Mine Collapsed Sign") and Library.WorldCmds.GetMap().Interactive:FindFirstChild("Diamond Mine Collapsed Sign").Main.SurfaceGui.Enabled then
+					if ChangingVariables.FarmHop then
+						serverHop()
+					end
+				end
+			end
+			Library.WorldCmds.Load(ChangingVariables.FarmWorld)
+			wait()
+		end
 		table.clear(ChangingVariables.FarmCoins)
 		local coins = Invoke("Get Coins")
 		for k,v in coins do
@@ -889,7 +904,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 				end
 			else
 				for i, vv in ChangingVariables.FarmAreas do
-					if v.a == vv then
+					if v.a == vv or (table.find(ChangingVariables.FarmAreas, "Mystic Mine") and v.n == "Cyber Cavern Diamond Mine Giant Chest") then
 						local excludedfounded = false
 						for _, vvv in ChangingVariables.ExcludedCoins do
 							if v.n == vvv then
@@ -978,6 +993,20 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	end
 
 	local function AutoFarm()
+		if ChangingVariables.MineMultSearching then
+			local Mult = 3
+			local OtherMult = 25
+			local MultFounded = false
+			for _,v in ChangingVariables.FarmCoins do
+				if (v.BoostM >= Mult and v.Name == "Mystic Mine Diamond Mine Giant Chest") or (v.BoostM >= OtherMult and (v.Name == "Cyber Cavern Diamond Mine Giant Chest" or v.Name == "Diamond Mine Chest")) then
+					MultFounded = true
+				end
+			end
+			if not MultFounded then
+				serverHop()
+				wait(15)
+			end
+		end
 		while ChangingVariables.Farming do
 			GetFarmPets()
 			GetFarmCoins()
@@ -1157,7 +1186,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 											end
 										end
 										print("Start Hop 2")
-										SendEndCurrencyHook()
+										spawn(SendEndCurrencyHook)
 										serverHop()
 										wait(15)
 									end
@@ -1393,7 +1422,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 								end
 							end
 							print("Start Hop 2")
-							SendEndCurrencyHook()
+							spawn(SendEndCurrencyHook)
 							serverHop()
 							wait(30)
 						end
@@ -1437,6 +1466,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	local AreasDropdownList
 
 	AreasDropdownList = Section:NewDropdown("Select an Area", "Click to select an area to autofarm.", {}, function(currentOption)
+		ChangingVariables.FarmWorld = Library.WorldCmds.Get()
 		if table.find(ChangingVariables.FarmAreas, currentOption) then
 			for i,v in ChangingVariables.FarmAreas do
 				if v == currentOption then
@@ -1556,14 +1586,11 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 
 	local function UpdateExcludedCoins()
 		table.clear(WorldCoins)
-		CurrentWorld = require(game:GetService("ReplicatedStorage").Library.Client.Save).Get().World
-		pcall(function()
-			for _,v in game:GetService("ReplicatedStorage")["__DIRECTORY"].Coins[CurrentWorld]:GetChildren() do
-				for _,v in v:GetChildren() do
-					table.insert(WorldCoins, v.Name)
-				end
+		for _,v in Library.WorldCmds.GetDir().spawns do
+			for _,v in v.coins do
+				table.insert(WorldCoins, v[1])
 			end
-		end)
+		end
 		ExcludedCoinsDropdown:Refresh(WorldCoins)
 	end
 	UpdateExcludedCoins()
@@ -1601,6 +1628,10 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		else
 			ChangingVariables.FarmHop = false
 		end
+	end)
+	
+	Section:NewToggle("Search 10x+ mult in mystic mine", "Search 10x+ giant chest mult in mystic mine", function(state)
+		ChangingVariables.MineMultSearching = state
 	end)
 
 
@@ -3122,6 +3153,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		end
 		local ars = ""
 		for i, v in ChangingVariables.FarmAreas do
+
 			ars = ars..v..", "
 		end
 		AreasLabel:UpdateLabel("Choosed areas: "..ars)
