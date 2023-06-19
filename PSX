@@ -1211,7 +1211,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		end
 		spawn(function()
 			FarmFruitsCD = true
-			wait(1800)
+			wait(3600)
 			FarmFruitsCD = false
 		end)
 	end
