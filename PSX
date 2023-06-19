@@ -281,6 +281,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		MaxPriceToBuyBoothPets = 0,
 		AutoFarmBestPosition = false,
 		MineMultSearching = false,
+		AutoFruits = false,
 	}
 
 	local plrfile = game.Players.LocalPlayer.Name
@@ -397,6 +398,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		MaxPriceToBuyBoothPets = 0,
 		AutoFarmBestPosition = false,
 		MineMultSearching = false,
+		AutoFruits = false,
 	}
 
 	local function convertColorToDiscordFormat(color)
@@ -991,8 +993,233 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 
 		return bestPosition
 	end
+	
+	local FarmFruitsCD = false
+	local function FarmFruits()
+		local Worlds = {
+			"Spawn",
+			"Fantasy",
+			"Tech",
+			"Axolotl Ocean",
+			"Pixel",
+			"Cat",
+		}
+		local FruitsUpdated = false
+		local function Farm1()
+			local withcoin = false
+			for _,v in Worlds do
+				withcoin = false
+				if not (Library.WorldCmds.Get() == v) and ChangingVariables.Farming and ChangingVariables.AutoFruits then
+					Library.WorldCmds.Load(v)
+					wait()
+					local Coins = Invoke("Get Coins")
+					local FruitsNames = {
+						"Pear",
+						"Banana",
+						"Orange",
+						"Apple",
+						"Pineapple",
+						"Rainbow Fruit"
+					}
+					local FarmCoins = {}
+					for k,v in Coins do
+						local coin = {
+							ID = k,
+							World = v.w,
+							Name = v.n,
+							Position = v.p
+						}
+						table.insert(FarmCoins, coin)
+					end
+					GetFarmPets()
+					local pets = {}
+					for i, v in pairs(ChangingVariables.FarmPets) do
+						table.insert(pets, v)
+					end
+					for _,v in FarmCoins do
+						for _,vv in FruitsNames do
+							if v.Name == vv then
+								withcoin = true
+								if v.Name == "Rainbow Fruit" then
+									FruitsUpdated = true
+								end
+								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Position+Vector3.new(0,10,0))
+								wait()
+								local petN = math.random(1,#pets)
+								SentFarmPet(pets[petN], v.ID)
+								table.remove(pets, petN)
+								wait(ChangingVariables.AutoFarmSentPetCD)
+							end
+						end
+					end
+				end
+				if withcoin then
+					wait(3)
+				else
+					wait()
+				end
+			end
+		end
+		local function Farm2()
+			if not (Library.WorldCmds.Get() == "Cat") then
+				Library.WorldCmds.Load("Cat")
+			end
+			LocalPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(Library.WorldCmds.GetMap().Teleports["Cat Kingdom"].Position)
+			local Coins = Invoke("Get Coins")
+			GetFarmPets()
+			table.clear(ChangingVariables.FarmCoins)
+			for k,v in Coins do
+				if (v.p - game.Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude <= 350 then
+					local excludedfounded = false
+					for _, vvv in ChangingVariables.ExcludedCoins do
+						if v.n == vvv then
+							excludedfounded = true
+						end
+					end
+					if excludedfounded == false then
+						local coin = {
+							ID = k,
+							World = v.w,
+							Area = v.a,
+							Hitpoints = v.h,
+							PetsFarming = v.petsFarming,
+							Name = v.n,
+							Boost = false,
+							BoostM = 0,
+							Position = v.p
+						}
+						if v.b then
+							coin.Boost = true
+							coin.BoostM = v.b.l[1].m
+						end
+						table.insert(ChangingVariables.FarmCoins, coin)
+						for i, vv in coin.PetsFarming do
+							if table.find(ChangingVariables.FarmPets, vv) then
+								for i, v in ChangingVariables.FarmPets do
+									if v == vv then
+										table.remove(ChangingVariables.FarmPets, i)
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+			local FarmRadius = 350
+			if #ChangingVariables.FarmPets >= 1 then
+				if ChangingVariables.SentAllPets then
+					if ChangingVariables.Farming then
+						if not (#ChangingVariables.FarmCoins <= 0) then
+							local coin = ChangingVariables.FarmCoins[math.random(1,#ChangingVariables.FarmCoins)]
+							local coinChanged = false
+							if not (ChangingVariables.SecondFarmMode == "") then
+								for i, v in ChangingVariables.FarmCoins do
+									pcall(function()
+										if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
+											if v.Name == "Rainbow Fruit" then
+												FruitsUpdated = true
+											end
+											coinChanged = true
+											coin = v
+										end
+									end)
+								end
+								local pets = {}
+								for i, v in pairs(ChangingVariables.FarmPets) do
+									table.insert(pets, v)
+								end
+								SentFarmPets(pets, coin.ID)
+								for i, v in ChangingVariables.FarmCoins do
+									if v == coin then
+										table.remove(ChangingVariables.FarmCoins, i)
+									end
+								end
+							end
+						end
+						wait(ChangingVariables.AutoFarmSentPetCD)
+					end
+				else
+					local usedpets = {}
+					for i, v in ChangingVariables.FarmPets do
+						table.insert(usedpets, v)
+						if ChangingVariables.Farming then
+							if not (#ChangingVariables.FarmCoins <= 0) then
+								local coin = ChangingVariables.FarmCoins[math.random(1,#ChangingVariables.FarmCoins)]
+								local coinChanged = false
+								for i, v in ChangingVariables.FarmCoins do
+									pcall(function()
+										if v.Name == "Pear" or v.Name == "Banana" or v.Name == "Orange" or v.Name == "Apple" or v.Name == "Pineapple" or v.Name == "Rainbow Fruit" then
+											if v.Name == "Rainbow Fruit" then
+												FruitsUpdated = true
+											end
+											coinChanged = true
+											coin = v
+										end
+									end)
+								end
+								if #ChangingVariables.FarmPets > 1 then
+									SentFarmPet(v, coin.ID)
+									for i, v in ChangingVariables.FarmCoins do
+										if v == coin then
+											table.remove(ChangingVariables.FarmCoins, i)
+										end
+									end
+								end
+								if #ChangingVariables.FarmCoins < 1 then
+									local needpets = ChangingVariables.FarmPets
+									for _,v in usedpets do
+										for i,vv in needpets do
+											if vv == v then
+												table.remove(needpets,i)
+											end
+										end
+									end
+									if ChangingVariables.AutoFarmSentPetCD > 0 then
+										wait(ChangingVariables.AutoFarmSentPetCD)
+									end
+									SentFarmPets(needpets, coin.ID)
+								end
+							end
+						end
+						if ChangingVariables.AutoFarmSentPetCD > 0 then
+							wait(ChangingVariables.AutoFarmSentPetCD)
+						end
+					end
+				end
+			end
+			wait(ChangingVariables.AutoFarmCD)
+		end
+		Farm1()
+		while not FruitsUpdated and ChangingVariables.Farming and ChangingVariables.AutoFruits do
+			Farm2()
+		end
+		local AllFruitsDone = true
+		for k,v in Library.Save.Get().Fruits do
+			if v.Amount < 199 then
+				AllFruitsDone = false
+			end
+		end
+		while not AllFruitsDone and ChangingVariables.Farming and ChangingVariables.AutoFruits do
+			Farm2()
+			AllFruitsDone = true
+			for k,v in Library.Save.Get().Fruits do
+				if v.Amount < 199 then
+					AllFruitsDone = false
+				end
+			end
+			wait()
+		end
+		spawn(function()
+			FarmFruitsCD = true
+			wait(1800)
+			FarmFruitsCD = false
+		end)
+	end
 
 	local function AutoFarm()
+		if ChangingVariables.AutoFruits then
+			FarmFruits()
+		end
 		if ChangingVariables.MineMultSearching then
 			local Mult = 3
 			local OtherMult = 25
@@ -1008,6 +1235,9 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			end
 		end
 		while ChangingVariables.Farming do
+			if not FarmFruitsCD and ChangingVariables.AutoFruits then
+				FarmFruits()
+			end
 			GetFarmPets()
 			GetFarmCoins()
 			local FarmRadius = 350
@@ -1629,9 +1859,9 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 			ChangingVariables.FarmHop = false
 		end
 	end)
-	
-	Section:NewToggle("Search 10x+ mult in mystic mine", "Search 10x+ giant chest mult in mystic mine", function(state)
-		ChangingVariables.MineMultSearching = state
+
+	Section:NewToggle("Auto Farm Fruits", "Farm Fruits if less than x150", function(state)
+		ChangingVariables.AutoFruits = state
 	end)
 
 
