@@ -993,7 +993,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 
 		return bestPosition
 	end
-	
+
 	local FarmFruitsCD = false
 	local function FarmFruits()
 		local Worlds = {
@@ -1045,9 +1045,11 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 								end
 								LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(v.Position+Vector3.new(0,10,0))
 								wait()
-								local petN = math.random(1,#pets)
-								SentFarmPet(pets[petN], v.ID)
-								table.remove(pets, petN)
+								if #pets >= 1 then
+									local petN = math.random(1,#pets)
+									SentFarmPet(pets[petN], v.ID)
+									table.remove(pets, petN)
+								end
 								wait(ChangingVariables.AutoFarmSentPetCD)
 							end
 						end
