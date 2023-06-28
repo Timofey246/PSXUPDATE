@@ -775,7 +775,6 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 						if table.find(eggs, string.sub(egg, 1, i)) then
 							ChangingVariables.SelectedEgg = string.sub(egg, 1, i)
 							GetEggInfoByName(ChangingVariables.SelectedEgg)
-							SearchingAnEgg = false
 						end
 					end
 				end
@@ -3476,6 +3475,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 	local SuperBreakerLabel = Section:NewLabel("x25 Super Breaker:")
 	local TotalEggsOpenned = Section:NewLabel("Total Eggs Openned:")
 	local InventoryFreeSpace = Section:NewLabel("Free Space in Inventory:")
+	local CollectionNum = Section:NewLabel("Pets in collection: 0")
 
 	local LibSave = require(game:GetService("ReplicatedStorage").Library.Client.Save).Get()
 	local function UpdateInfo()
@@ -3488,6 +3488,7 @@ if game.PlaceId == 6284583030 or game.PlaceId == 10321372166 or game.PlaceId == 
 		InsaneLuckLabel:UpdateLabel("x25 Insane Luck: "..insaneLucky)
 		SuperBreakerLabel:UpdateLabel("x25 Super Breaker: "..SuperBreaker)
 		InventoryFreeSpace:UpdateLabel("Free Space in Inventory: "..MaxSlots-PetsCound)
+		CollectionNum:UpdateLabel("Pets in collection: "..#Library.Save.Get().Collection)
 		local totaleggs = 0
 		for _,v in playerEggsOpened do
 			totaleggs+=tonumber(v)
